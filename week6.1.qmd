@@ -1,0 +1,115 @@
+---
+title: "week6.1"
+format: ipynb
+editor: visual
+---
+```{r}
+library(dplyr)
+library(readr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+library(cowplot)
+library(ISLR2)
+library(stringr)
+library(corrplot)
+```
+
+## Agenda
+
+1.  QQ plot
+2.  map function
+3.  Backward, forward, lasso and ridge regression examples
+
+### Normal Distribution:
+
+-   **Appearance:** For a normal distribution, the Q-Q plot will show points forming a straight line.
+-   **Interpretation:** If the points lie approximately along a straight line, it indicates that the data follows a normal distribution.
+
+```{r}
+
+```
+
+### Heavy-Tailed Distribution:
+
+-   **Appearance:** If the tail of the Q-Q plot rises more steeply than that of a normal distribution, it suggests heavy tails.
+-   **Interpretation:** This indicates that extreme values occur more frequently than they would in a normal distribution. Common heavy-tailed distributions include the Cauchy or Pareto distributions.
+
+```{r}
+
+```
+
+### Light-Tailed Distribution:
+
+-   **Appearance:** If the tail of the Q-Q plot rises less steeply than that of a normal distribution, it suggests light tails.
+-   **Interpretation:** This means extreme values occur less frequently than they would in a normal distribution. Common light-tailed distributions include the uniform or exponential distributions.
+
+```{r}
+
+```
+
+### Right Skew (Positive Skewness):
+
+1.  **Q-Q Plot Appearance:**
+
+    -   On the Q-Q plot, the points towards the left (lower quantiles) may be clustered more closely to the theoretical line, while the points on the right (higher quantiles) may deviate upwards, forming an upward curvature.
+
+2.  **Interpretation:**
+
+    -   The upward curvature on the right side indicates that the observed data's right tail is longer than that of a normal distribution.
+    -   It suggests that there are relatively more data points with higher values than what a normal distribution would predict.
+    -   In other words, the data is skewed to the right, and there are some extreme values in the positive direction.
+
+    ```{r}
+
+    ```
+
+### Left Skew (Negative Skewness):
+
+1.  **Q-Q Plot Appearance:**
+    -   On the Q-Q plot, the points towards the right (higher quantiles) may be clustered more closely to the theoretical line, while the points on the left (lower quantiles) may deviate downwards, forming a downward curvature.
+2.  **Interpretation:**
+    -   The downward curvature on the left side indicates that the observed data's left tail is longer than that of a normal distribution.
+    -   It suggests that there are relatively more data points with lower values than what a normal distribution would predict.
+    -   In other words, the data is skewed to the left, and there are some extreme values in the negative direction.
+
+```{r}
+
+```
+
+# map function examples
+
+# Putting everything together
+
+```{r}
+## ## You can use this function to generate a formula from a vector 
+make_formula <- function(x){
+  as.formula(
+    paste("alcohol ~ ", paste(x, collapse = " + "))
+  )
+}
+make_formula(c("a", "b", "c"))
+## ## You can use this function to generate a model matrix for glmnet()
+make_model_matrix <- function(formula){
+  X <- model.matrix(formula, df)[, -1]
+  cnames <- colnames(X)
+  for(i in 1:ncol(X)){
+    if(!cnames[i] == "typewhite"){
+      X[, i] <- scale(X[, i])
+    } else {
+      colnames(X)[i] <- "type"
+    }
+  }
+  return(X)
+}
+```
+
+### data intake
+
+```{r}
+url1 <- "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv"
+url2 <- "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv"
+
+df1 <- read_delim(url1, delim=";")
+df2 <- read_delim(url2, delim=";")
+```
